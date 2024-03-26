@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- vue -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    <!-- fontawesome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+
+    <title>翻牌小遊戲</title>
+    <link rel="stylesheet" href="all.css">
+</head>
+
+<body>
+    <div id=app>
+        <div class="comple " v-if="calculation === 16">
+            <div class="sma-box " @click="ret">
+                <h1>恭喜過關</h1>
+                <h2>你使用了 {{parseInt(num/2)}} Move</h2>
+            </div>
+        </div>
+        <main>
+            <h1>翻牌小遊戲</h1>
+
+            <p>{{parseInt(num/2)}} Moves <i class="fas fa-undo-alt" @click="ret"></i></p>
+            <div class="wrap">
+                <div class="card-wrap" @click="tran(index)" v-for="(item, index) in arr" :key="index">
+                    <div class="card" :class="[{comp:item.comp},{active:item.trun}]">
+
+                        <div class="card-front">
+
+                        </div>
+
+                        <div class="card-back">
+                            <i :class=item.img></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+<script>
+    var app = new Vue({
+        el: '#app',
+        data: {
+
+            trannum: 0,
+            arrkey: [],
+
+            // comp: false,
+
+            num: 0,
+
+            arr: [{
+                img: 'fas fa-rocket fa-4x',
+                trun: false,
+                comp: false
+            }, {
+                img: 'fas fa-rocket fa-4x',
+                trun: false,
+                comp: false
+            }, {
+                img: 'fab fa-apple fa-4x',
+                trun: false,
+                comp: false
+            }, {
+                img: 'fab fa-apple fa-4x',
+                trun: false,
+                comp: false
+            }, {
+                img: "fab fa-css3-alt fa-4x",
+                trun: false,
+                comp: false
+            }, {
+                img: "fab fa-css3-alt fa-4x",
+                trun: false,
+                comp: false
+            }, {
+                img: "fab fa-html5 fa-4x",
+                trun: false,
+                comp: false
+            }, {
+                img: "fab fa-html5 fa-4x",
+                trun: false,
+                comp: false
+            }, {
+                img: "fab fa-node-js fa-4x",
+                trun: false,
+                comp: false
+            }, {
+                img: "fab fa-node-js fa-4x",
+                trun: false,
+                comp: false
+            }, {
+                img: "fab fa-vuejs fa-4x",
+                trun: false,
+                comp: false
+            }, {
+                img: "fab fa-vuejs fa-4x",
+                trun: false,
+                comp: false
+            }, {
+                img: "fab fa-npm fa-4x",
+                trun: false,
+                comp: false
+            }, {
+                img: "fab fa-npm fa-4x",
+                trun: false,
+                comp: false
+            }, {
+                img: "fab fa-windows fa-4x",
+                trun: false,
+                comp: false
+            }, {
+                img: "fab fa-windows fa-4x",
+                trun: false,
+                comp: false
+            }, ],
+        },
+        computed: {
+
+            // 計算完成的排
+            calculation() {
+                let index = 0;
+                // if (this.trannum === 1) {
+                //     index++
+
+                // }
+                this.arr.forEach(item => {
+                    if (item.trun === true) {
+                        index++;
+                    }
+                });
+                return index
+            }
+        },
+        methods: {
+            // 打亂陣列
+            shuffle() {
+                for (let i = this.arr.length - 1; i > 0; i--) {
+                    let j = Math.floor(Math.random() * (i + 1));
+                    [this.arr[i], this.arr[j]] = [this.arr[j], this.arr[i]];
+                };
+            },
+
+            // 翻卡
+            tran(key) {
+                // 翻同張或已經match的 就不動作
+                if (this.arr[key].trun === true) return;
+
+                // 當翻2張牌時不動作
+                if (this.trannum === 2) return;
+
+                this.num++;
+                this.arr[key].trun = !this.arr[key].trun;
+                this.arrkey.push(key)
+                    // console.log(this.trannum, this.arrkey[0])
+                this.trannum++;
+                if (this.trannum === 2) {
+                    // 2張牌相同
+                    if (this.arr[this.arrkey[0]].img === this.arr[this.arrkey[1]].img) {
+
+                        // 一樣時讓他發亮
+                        this.arr[this.arrkey[0]].comp = true;
+                        this.arr[this.arrkey[1]].comp = true;
+
+                        this.arrkey = [];
+                        this.trannum = 0;
+                        return;
+                    }
+                    //2張牌不相同
+                    setTimeout(this.tranTwi, 1000)
+                }
+            },
+
+            // 翻2次蓋排
+            tranTwi() {
+                this.arr[this.arrkey[0]].trun = false;
+                this.arr[this.arrkey[1]].trun = false;
+                this.arrkey = [];
+                this.trannum = 0;
+            },
+
+            ret() {
+                this.arr.forEach(item => {
+                    item.trun = false;
+                    item.comp = false;
+                });
+                this.trannum = 0;
+                this.arrkey = [];
+                this.num = 0;
+                this.shuffle();
+            }
+        },
+        created() {
+            this.shuffle();
+        },
+    })
+</script>
+
+</html>
